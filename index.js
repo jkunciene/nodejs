@@ -24,12 +24,7 @@ app.get('/api/courses/:id', (req, res) => {
 })
 
 app.post('/api/courses', (req, res) => {
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
-    const result = Joi.validate(req.body, schema);
-    console.log(result);
-
+   const result = validateCourse(req.body);
     if(result.error){
         res.status(400).send("Name is required and shold be min 3char");
         return;
@@ -42,6 +37,36 @@ app.post('/api/courses', (req, res) => {
     courses.push(course);
     res.send(course);
 });
+
+app.put('/api/courses/:id', (req, res) => {
+    //look up the course
+    //if not existing, return
+    const my_course = courses.find(course => course.id === parseInt(req.params.id));
+    if(!my_course) res.status(404).send("not found");
+    //validate
+    //if invalid, return 400
+    const result = validateCourse(req.body);
+    console.log(result);
+    if(result.error){
+        res.status(400).send("Name is required and shold be min 3char");
+        return;
+    }
+
+    //update course
+    //return the course
+    my_course.name = req.body.name;
+    res.send(my_course);
+});
+
+function validateCourse(course){
+    const schema = Joi.object({
+        name: Joi.string().min(3).required()
+    });
+  return  schema.validate(course);
+  
+   
+}
+
 
 
 // environment variables
