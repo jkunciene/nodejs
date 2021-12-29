@@ -58,16 +58,26 @@ app.put('/api/courses/:id', (req, res) => {
     res.send(my_course);
 });
 
+app.delete('/api/courses/:id', (req, res) => {
+    //look up the course
+    //if not existing, return
+    const my_course = courses.find(course => course.id === parseInt(req.params.id));
+    if(!my_course) res.status(404).send("not found");
+
+    //delete
+    const index = courses.indexOf(my_course);
+    courses.splice(index, 1);
+
+    res.send(my_course);
+})
+
 function validateCourse(course){
     const schema = Joi.object({
         name: Joi.string().min(3).required()
     });
-  return  schema.validate(course);
-  
+  return  schema.validate(course); 
    
 }
-
-
 
 // environment variables
 const port = process.env.PORT || 5000
