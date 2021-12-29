@@ -25,10 +25,7 @@ app.get('/api/courses/:id', (req, res) => {
 
 app.post('/api/courses', (req, res) => {
    const result = validateCourse(req.body);
-    if(result.error){
-        res.status(400).send("Name is required and shold be min 3char");
-        return;
-    }
+    if(result.error) return res.status(400).send("Name is required and shold be min 3char");   
 
    const course = {
        id: courses.length + 1,
@@ -42,16 +39,14 @@ app.put('/api/courses/:id', (req, res) => {
     //look up the course
     //if not existing, return
     const my_course = courses.find(course => course.id === parseInt(req.params.id));
-    if(!my_course) res.status(404).send("not found");
+    if(!my_course) return res.status(404).send("not found");
+    
     //validate
     //if invalid, return 400
     const result = validateCourse(req.body);
     console.log(result);
-    if(result.error){
-        res.status(400).send("Name is required and shold be min 3char");
-        return;
-    }
-
+    if(result.error) return res.status(400).send("Name is required and shold be min 3char");
+   
     //update course
     //return the course
     my_course.name = req.body.name;
@@ -62,7 +57,7 @@ app.delete('/api/courses/:id', (req, res) => {
     //look up the course
     //if not existing, return
     const my_course = courses.find(course => course.id === parseInt(req.params.id));
-    if(!my_course) res.status(404).send("not found");
+    if(!my_course) return res.status(404).send("not found");
 
     //delete
     const index = courses.indexOf(my_course);
